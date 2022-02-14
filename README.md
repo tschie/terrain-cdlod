@@ -4,6 +4,8 @@ This project demonstrates a basic implementation of terrain using Continuous Dis
 
 ![Zooming into mountain with increasing detail](terrain-cdlod.gif)
 
+[Demo](https://tschie.github.io/terrain-cdlod)
+
 The implementation is intentionally kept minimal to focus on the quadtree node selection process and morphing in the vertex shader. It omits several features and optimizations likely found in a complete implementation. 
 
 The frustum culling also does not take height into account, so you may notice some holes near the edge of the screen.
