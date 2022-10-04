@@ -65,6 +65,7 @@ export class Quadtree {
   }
 
   selectLods(node, lodLevel) {
+    node.lodLevel = lodLevel
     if (!node.aabb.intersectsSphere(new Sphere(this.cameraPosition, this.lodRanges[lodLevel]))) {
       return false;
     }
@@ -74,16 +75,29 @@ export class Quadtree {
     }
 
     if (lodLevel === 0) {
-      this.nodes.push(node);
+      // add whole node
+      // 4 children at 1/2 resolution = 1 full resolution node
+      const children = node.children;
+      children.forEach((child) => {
+        child.lodLevel = lodLevel
+        this.nodes.push(child)
+      })
       return true;
     } else {
       if (!node.aabb.intersectsSphere(new Sphere(this.cameraPosition, this.lodRanges[lodLevel - 1]))) {
-        node.lodLevel = lodLevel;
-        this.nodes.push(node);
+        // add whole node
+        // 4 children at 1/2 resolution = 1 full resolution node
+        const children = node.children;
+        children.forEach((child) => {
+          child.lodLevel = lodLevel
+          this.nodes.push(child)
+        })
       } else {
         node.children.forEach(child => {
-          child.lodLevel = lodLevel - 1
           if (!this.selectLods(child, lodLevel - 1)) {
+            // use lod level of parent since this child wasn't selected at lower LOD
+            child.lodLevel = lodLevel
+            // add partial node
             this.nodes.push(child)
           }
         })
