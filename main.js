@@ -108,7 +108,9 @@ const colors = [
 ].map(c => new Color(c))
 
 // single plane geometry shared by each terrain tile
-const geometry = new PlaneBufferGeometry(1, 1, resolution, resolution);
+// use half of resolution for "partial nodes"
+// a "full node" will use 4 half resolution instances
+const geometry = new PlaneBufferGeometry(1, 1, resolution / 2, resolution / 2);
 geometry.rotateX(-Math.PI / 2); // flip to xz plane
 
 // each tile keeps track of its LOD level
@@ -127,7 +129,7 @@ grassTexture.wrapT = RepeatWrapping;
 
 const material = new ShaderMaterial({
   uniforms: {
-    resolution: { value: resolution },
+    resolution: { value: resolution / 2 },
     lodRanges: { value: lodRanges },
     colors: {
       value: colors
