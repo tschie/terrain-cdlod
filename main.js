@@ -3,7 +3,6 @@ import {
   Clock,
   Color,
   Frustum,
-  ImageUtils,
   InstancedBufferAttribute,
   InstancedMesh,
   MathUtils,
@@ -14,16 +13,17 @@ import {
   RepeatWrapping,
   Scene,
   ShaderMaterial,
+  TextureLoader,
   Vector3,
-  WebGLRenderer,
+  WebGLRenderer
 } from "three";
-import {Quadtree} from "./quadtree";
-import {terrainFragmentShader} from "./fragmentShader.glsl";
-import {terrainVertexShader} from "./vertexShader.glsl";
-import {FlyControls} from "three/examples/jsm/controls/FlyControls";
+import { Quadtree } from "./quadtree";
+import { terrainFragmentShader } from "./fragmentShader.glsl";
+import { terrainVertexShader } from "./vertexShader.glsl";
+import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import Stats from "three/examples/jsm/libs/stats.module";
-import {GUI} from "three/examples/jsm/libs/dat.gui.module";
-import {Sky} from "three/examples/jsm/objects/Sky";
+import { GUI } from "three/examples/jsm/libs/dat.gui.module";
+import { Sky } from "three/examples/jsm/objects/Sky";
 import grassUrl from "./grass.png";
 
 // max number of tiles allowed to show (conservative estimate)
@@ -123,7 +123,7 @@ const lodLevelAttribute = new InstancedBufferAttribute(
 
 geometry.setAttribute("lodLevel", lodLevelAttribute);
 
-const grassTexture = ImageUtils.loadTexture(grassUrl);
+const grassTexture = new TextureLoader().load(grassUrl)
 grassTexture.wrapS = RepeatWrapping;
 grassTexture.wrapT = RepeatWrapping;
 
