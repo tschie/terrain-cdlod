@@ -144,7 +144,8 @@ export const terrainVertexShader = `
     * mesh_pos: vertex normalized pos (0, 1)
     **/
     vec2 morphVertex(vec2 vertex, vec2 mesh_pos, float morphValue) {
-        vec2 fraction = fract(mesh_pos * vec2(resolution, resolution) * 0.5) * 2.0 / vec2(resolution, resolution);
+        vec2 gridDim = vec2(resolution, resolution);
+        vec2 fraction = fract(mesh_pos * gridDim * 0.5) * 2.0 / gridDim;
         return vertex - fraction * morphValue;
     }
 
@@ -157,9 +158,8 @@ export const terrainVertexShader = `
 
         float dist = length(cameraPosition - worldPos);
         float morphK = morphValue(dist);
-        vec2 normalizedMeshPos = position.xz + vec2(0.5, 0.5);
         // morph in object space
-        vec2 morphedPos = morphVertex(position.xz, normalizedMeshPos, morphK);
+        vec2 morphedPos = morphVertex(position.xz, uv.xy, morphK);
 
         vec3 morphedWorldPos = (instanceMatrix * vec4(morphedPos.x, 0.0, morphedPos.y, 1.0)).xyz;
         float noiseHeight = height(morphedWorldPos);

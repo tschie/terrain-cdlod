@@ -3,7 +3,6 @@ import {
   Clock,
   Color,
   Frustum,
-  ImageUtils,
   InstancedBufferAttribute,
   InstancedMesh,
   MathUtils,
@@ -14,16 +13,17 @@ import {
   RepeatWrapping,
   Scene,
   ShaderMaterial,
+  TextureLoader,
   Vector3,
-  WebGLRenderer,
+  WebGLRenderer
 } from "three";
-import {Quadtree} from "./quadtree";
-import {terrainFragmentShader} from "./fragmentShader.glsl";
-import {terrainVertexShader} from "./vertexShader.glsl";
-import {FlyControls} from "three/examples/jsm/controls/FlyControls";
+import { Quadtree } from "./quadtree";
+import { terrainFragmentShader } from "./fragmentShader.glsl";
+import { terrainVertexShader } from "./vertexShader.glsl";
+import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import Stats from "three/examples/jsm/libs/stats.module";
-import {GUI} from "three/examples/jsm/libs/dat.gui.module";
-import {Sky} from "three/examples/jsm/objects/Sky";
+import { GUI } from "three/examples/jsm/libs/dat.gui.module";
+import { Sky } from "three/examples/jsm/objects/Sky";
 import grassUrl from "./grass.png";
 
 // max number of tiles allowed to show (conservative estimate)
@@ -108,7 +108,9 @@ const colors = [
 ].map(c => new Color(c))
 
 // single plane geometry shared by each terrain tile
-const geometry = new PlaneBufferGeometry(1, 1, resolution, resolution);
+// use half of resolution for "partial nodes"
+// a "full node" will use 4 half resolution instances
+const geometry = new PlaneBufferGeometry(1, 1, resolution / 2, resolution / 2);
 geometry.rotateX(-Math.PI / 2); // flip to xz plane
 
 // each tile keeps track of its LOD level
@@ -121,13 +123,13 @@ const lodLevelAttribute = new InstancedBufferAttribute(
 
 geometry.setAttribute("lodLevel", lodLevelAttribute);
 
-const grassTexture = ImageUtils.loadTexture(grassUrl);
+const grassTexture = new TextureLoader().load(grassUrl)
 grassTexture.wrapS = RepeatWrapping;
 grassTexture.wrapT = RepeatWrapping;
 
 const material = new ShaderMaterial({
   uniforms: {
-    resolution: { value: resolution },
+    resolution: { value: resolution / 2 },
     lodRanges: { value: lodRanges },
     colors: {
       value: colors
